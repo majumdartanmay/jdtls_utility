@@ -9,3 +9,9 @@ No promises, but we will try to make the process easier. I am thinking of using 
 1. Intention is to learn lua while doing something useful. 
 2. This project is being developed in Windows. I needed a scripting tool which is cross platform. Lua seemed more light weight that node and python.
 3. Latest version of PowerShell is cross-platform. However, I am not sure how compatible it is with older linux and windows OS. 
+
+*Update*
+
+Using Lua is not working out. Basic utilities like deleting a directory needs a dependency. I am hoping a better result using ANT. 
+
+
