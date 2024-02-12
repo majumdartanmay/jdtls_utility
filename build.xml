@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Setup JDTLS" default="init">
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml" />
+
+    <property file="build.properties" description="Read properties from build.properties"/>
+
+    <target name="print_properties">
+        <echo message =  "destination_directory=${destination_directory}"/>
+        <echo message =  "output_directory_name=${output_directory_name}"/>
+    </target>
+    
+    <target name = "create_custom_properties">
+        <property name = "internal_output_path" value = "${destination_directory}/${output_directory_name}"/>
+        <echo message = "Internal output path = ${internal_output_path}"/>
+    </target>
+
+    <target name = "init">
+        <antcall target = "print_properties"/>
+        <antcall target = "create_custom_properties"/>
+        <antcall target = "delete_output_if_exists" directory = "internal_output_path"/>
+    </target>
+
+    <target name="clean-directory">
+        <echo message = "Checking if ${directory} exists or not"/>
+        <if>
+            <available file="${directory}" type="dir" />
+            <then>
+                <delete dir="${directory}" />
+            </then>
+        </if>    
+        <else>
+            <echo message = "${directory} does not exist. Proceeding ahead."/>
+        </else>
+    </target>
+</project>
+
