@@ -5,25 +5,47 @@
 
     <property file="build.properties" description="Read properties from build.properties"/>
     <target name = "init">
+        <antcall target = "clean_directory">
+            <param name = "directory" value = "${output}"/>
+        </antcall>
         <antcall target = "download_file"/>
+        <antcall target = "move_to_dest_dir" />
     </target>
 
     <target name="clean_directory">
         <echo message = "Checking if ${directory} exists or not"/>
         <if>
-            <available file="${directory}" type="dir" />
+            <available file="${directory}" type="dir"/>
             <then>
                 <delete dir="${directory}" />
             </then>
-        </if>    
-        <else>
-            <echo message = "${directory} does not exist. Proceeding ahead."/>
-        </else>
+        </if>
+        <mkdir dir="${directory}" />
     </target>
 
     <target name="download_file">
         <get src="${jdtls_download_link}" 
         dest="${internal_output_path_full}"/>
+    </target>
+
+    <target name = "extract_tar_file">
+        <untar src="${input_tar}" dest="${output_dir}" compression="gzip"/>
+        <delete file="${input_tar}" />
+    </target>
+
+    <target name = "move_to_dest_dir">
+
+        <condition property = "jdtls_output_dir" value="${jdtls_output_dir}" else = "${output}" >
+            <isset property = "jdtls_output_dir"/>
+        </condition>
+
+        <echo message = "Extracting to ${jdtls_output_dir}" />
+
+        <antcall target = "extract_tar_file">
+            <param name = "input_tar" value = "${internal_output_path_full}"/>
+            <param name = "output_dir" value = "${jdtls_output_dir}"/>
+        </antcall>
+
     </target>
 
 </project>
