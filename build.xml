@@ -65,11 +65,11 @@
             <os family="windows"/>
         </condition>
 
-        <condition property="os_pty" value = "linux">
-            <os family="unix"/>
+        <condition property="os_pty" value = "mac">
+            <os family="mac"/>
         </condition>
 
-        <condition property="os_pty" value = "mac">
+        <condition property="os_pty" value = "linux">
             <os family="unix"/>
         </condition>
 
