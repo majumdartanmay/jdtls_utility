@@ -9,9 +9,24 @@
 
     <property file="build.properties" description="Read properties from build.properties"/>
 
-    <target name = "init" depends = "set_os">
-        <echo message = "java home : ${java.home}"/>
-        <echo message = "java version : ${java.version}"/>
+    <target name = "determine_java">
+        <condition property = "jdtls_java" value="${java.home}" else = "${jdtls_user_java}"  >
+            <or>
+                <not>
+                    <isset property = "jdtls_user_java"/>
+                </not>
+                <equals arg1="${jdtls_user_java}" arg2=""/>
+            </or>
+        </condition>
+
+        <echo message = "java home : ${jdtls_java}"/>
+        <echo message = "Running java -version with the provided JDK"/>
+        <exec executable="${jdtls_java}/bin/java">
+            <arg value="-version"/>
+        </exec>
+    </target>
+
+    <target name = "init" depends = "set_os, determine_java">
         <echo message = "OS  : ${os_pty}"/>
         <antcall target = "clean_directory">
             <param name = "directory" value = "${output}"/>
@@ -90,7 +105,7 @@
 
         <copy file="${input_file_template}" tofile="${config_location}" overwrite = "true"/>
 
-        <replace file="${config_location}" token='@java_location@' value="${java.home}" />
+        <replace file="${config_location}" token='@java_location@' value="${jdtls_java}" />
         <replace file="${config_location}" token="@equinox_path@" value="${equinox_location}" />
         <replace file="${config_location}" token="@jdtls_location@" value="${jdtls_output_dir}" />
         <replace file="${config_location}" token="@os_variant@" value="${os_pty}" />
