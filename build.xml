@@ -4,7 +4,9 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" />
 
     <property file="build.properties" description="Read properties from build.properties"/>
-    <target name = "init">
+    <target name = "init" depends = "set_os">
+        <echo message = "java home : ${java.home}"/>
+        <echo message = "OS  : ${os_pty}"/>
         <antcall target = "clean_directory">
             <param name = "directory" value = "${output}"/>
         </antcall>
@@ -46,6 +48,36 @@
             <param name = "output_dir" value = "${jdtls_output_dir}"/>
         </antcall>
 
+    </target>
+
+    <target name = "set_os">
+        <condition property="os_pty" value = "win">
+            <os family="windows"/>
+        </condition>
+
+        <condition property="os_pty" value = "linux">
+            <os family="unix"/>
+        </condition>
+
+        <condition property="os_pty" value = "mac">
+            <os family="unix"/>
+        </condition>
+        <echo message = "OS familiy : ${os_pty}"/>
+    </target>
+
+    <target name="find_equinox_launcher_jar" >
+        <first id="first">
+            <fileset dir="bin/plugins" includes="org.eclipse.equinox.launcher_*.jar" />
+        </first>
+        <property name = "equinox_location" value = "${toString:first}"/>
+        <echo message="${equinox_location}" />
+    </target>
+
+    <target name = "replace_template_values" depends = "set_os, find_equinox_launcher_jar">
+        <replace file="${input_file_template}" token='@java_location@' value="${java.home}" />
+        <replace file="${input_file_template}" token="@equinox_path@" value="${equinox_location}" />
+        <replace file="${input_file_template}" token="@jdtls_location@" value="${jdtls_output_dir}" />
+        <replace file="${input_file_template}" token="@os_variant@" value="${os_pty}" />
     </target>
 
 </project>
