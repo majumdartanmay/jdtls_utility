@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Setup JDTLS" default="init">
 
-    <taskdef resource="net/sf/antcontrib/antlib.xml" />
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
 
     <property file="build.properties" description="Read properties from build.properties"/>
     <target name = "init" depends = "set_os">
         <echo message = "java home : ${java.home}"/>
+        <echo message = "java version : ${java.version}"/>
         <echo message = "OS  : ${os_pty}"/>
         <antcall target = "clean_directory">
             <param name = "directory" value = "${output}"/>
@@ -74,10 +79,12 @@
     </target>
 
     <target name = "replace_template_values" depends = "set_os, find_equinox_launcher_jar">
-        <replace file="${input_file_template}" token='@java_location@' value="${java.home}" />
-        <replace file="${input_file_template}" token="@equinox_path@" value="${equinox_location}" />
-        <replace file="${input_file_template}" token="@jdtls_location@" value="${jdtls_output_dir}" />
-        <replace file="${input_file_template}" token="@os_variant@" value="${os_pty}" />
+        <copy file="${input_file_template}" tofile="${output}/${output_file_name}"/>
+        <property name = "config_location" value = "${output}/${output_file_name}"/>
+        <replace file="${config_location}" token='@java_location@' value="${java.home}" />
+        <replace file="${config_location}" token="@equinox_path@" value="${equinox_location}" />
+        <replace file="${config_location}" token="@jdtls_location@" value="${jdtls_output_dir}" />
+        <replace file="${config_location}" token="@os_variant@" value="${os_pty}" />
     </target>
 
 </project>
