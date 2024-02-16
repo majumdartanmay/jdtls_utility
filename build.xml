@@ -8,6 +8,7 @@
     </taskdef>
 
     <property file="build.properties" description="Read properties from build.properties"/>
+
     <target name = "init" depends = "set_os">
         <echo message = "java home : ${java.home}"/>
         <echo message = "java version : ${java.version}"/>
@@ -17,6 +18,7 @@
         </antcall>
         <antcall target = "download_file"/>
         <antcall target = "move_to_dest_dir" />
+        <antcall target = "replace_template_values" />
     </target>
 
     <target name="clean_directory">
@@ -40,11 +42,13 @@
         <delete file="${input_tar}" />
     </target>
 
-    <target name = "move_to_dest_dir">
-
+    <target name = "set_dest_property">
         <condition property = "jdtls_output_dir" value="${jdtls_output_dir}" else = "${output}" >
             <isset property = "jdtls_output_dir"/>
         </condition>
+    </target>
+
+    <target name = "move_to_dest_dir" depends = "set_dest_property">
 
         <echo message = "Extracting to ${jdtls_output_dir}" />
 
@@ -56,6 +60,7 @@
     </target>
 
     <target name = "set_os">
+
         <condition property="os_pty" value = "win">
             <os family="windows"/>
         </condition>
@@ -67,24 +72,40 @@
         <condition property="os_pty" value = "mac">
             <os family="unix"/>
         </condition>
+
         <echo message = "OS familiy : ${os_pty}"/>
+
     </target>
 
     <target name="find_equinox_launcher_jar" >
         <first id="first">
-            <fileset dir="bin/plugins" includes="org.eclipse.equinox.launcher_*.jar" />
+            <fileset dir="${jdtls_output_dir}/plugins" includes="org.eclipse.equinox.launcher_*.jar" />
         </first>
         <property name = "equinox_location" value = "${toString:first}"/>
         <echo message="${equinox_location}" />
     </target>
 
-    <target name = "replace_template_values" depends = "set_os, find_equinox_launcher_jar">
-        <copy file="${input_file_template}" tofile="${output}/${output_file_name}"/>
+    <target name = "replace_template_values" depends = "set_os, set_dest_property, find_equinox_launcher_jar">
         <property name = "config_location" value = "${output}/${output_file_name}"/>
+
+        <copy file="${input_file_template}" tofile="${config_location}" overwrite = "true"/>
+
         <replace file="${config_location}" token='@java_location@' value="${java.home}" />
         <replace file="${config_location}" token="@equinox_path@" value="${equinox_location}" />
         <replace file="${config_location}" token="@jdtls_location@" value="${jdtls_output_dir}" />
         <replace file="${config_location}" token="@os_variant@" value="${os_pty}" />
+        <replace file="${config_location}" token="\" value="/" />
+
+        <antcall target = "print_contents">
+            <param name = "input" value = "${config_location}" />
+        </antcall>
+
+    </target>
+
+    <target name = "print_contents">
+        <echo message = "Trying to print contents of ${input}" />
+        <loadfile property="file.contents" srcFile="${input}"/>
+        <echo>${file.contents}</echo>
     </target>
 
 </project>
