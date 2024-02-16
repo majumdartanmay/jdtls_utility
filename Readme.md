@@ -39,7 +39,6 @@ All customization can be made through [build.properties](https://github.com/maju
 
 ```python
 
-
 output=./bin
 # Output directory, where all the temporary files will be generated. This is recreated at every execution.
 
@@ -57,6 +56,9 @@ output_file_name=java.config.lua
 
 input_file_template=java.config.template.lua
 # The template file. Based on which ${output_file_name} is generated.
+
+jdtls_user_java=
+# Java which will be used for JDTLS. This is useful when you want separate Java for ANT and JDTLS. If empty, JAVA_HOME will be used
 
 ```
 
