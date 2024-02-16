@@ -11,7 +11,7 @@ It is quite easy to setup nvim-jdtls using Mason. However, its difficult to cust
 3. We have a template of the lua configuration file. The template is located at [java.config.template.lua](https://github.com/majumdartanmay/jdtls_utility/blob/main/java.config.template.lua)
 4. The ANT script will replace the necessary values and created the configuration folder in output directory. By default the output directory in bin
 5. You can take thies output configuration and simply reference it somewhere in your neo vim configuration. 
-6. It will use JAVA_HOME for your JDTLS configuration. Use build.properties if you want to override that.
+6. It will use JAVA_HOME for your JDTLS configuration. Use [build.properties](https://github.com/majumdartanmay/jdtls_utility?tab=readme-ov-file#customizations) if you want to override that.
 
 ## Prerequisites?
 
